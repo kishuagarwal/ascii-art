@@ -2,6 +2,11 @@
 
 Simple, but amazing to play with.
 
+Sample WebCam feed as seen by ascii-art lens
+
+![Input Image](ascii-art.gif)
+
+
 ### Input image
 ![Input Image](input.jpg)
 

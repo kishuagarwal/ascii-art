@@ -1,4 +1,3 @@
-from PIL import Image
 from camera import get_webcam_image
 import colorama
 from colorama import ansi
@@ -27,27 +26,36 @@ def get_ascii_for_pixel(pixel, algo = "AVG"):
 if __name__ == "__main__":
     # input_image = Image.open("input.jpg")
     colorama.init()
-    while True:
-        input_image = get_webcam_image()
-        width, height = input_image.size
 
-        resize_to = min(width, height, MAX_TERMINAL_IMAGE_SIZE)
-        input_image = input_image.resize((resize_to, resize_to))
+    # Clear the screen before outputting the ascii image
+    print(ansi.clear_screen())
 
-        output_matrix = []
-        for y in range(resize_to):
-            current_matrix_row = []
-            for x in range(resize_to):
-                pixel = input_image.getpixel((x, y))
-                ascii_char = get_ascii_for_pixel(pixel, algo="MIN_MAX")
-                current_matrix_row.append(ascii_char)
-                current_matrix_row.append(ascii_char)
-                current_matrix_row.append(ascii_char)
-            output_matrix.append(current_matrix_row)
+    try:
+        while True:
+            input_image = get_webcam_image()
+            width, height = input_image.size
 
+            resize_to = min(width, height, MAX_TERMINAL_IMAGE_SIZE)
+            input_image = input_image.resize((resize_to, resize_to))
+
+            output_matrix = []
+            for y in range(resize_to):
+                current_matrix_row = []
+                for x in range(resize_to):
+                    pixel = input_image.getpixel((x, y))
+                    ascii_char = get_ascii_for_pixel(pixel, algo="L")
+                    current_matrix_row.append(ascii_char)
+                    current_matrix_row.append(ascii_char)
+                    current_matrix_row.append(ascii_char)
+                output_matrix.append(''.join(current_matrix_row))
+
+            # Resets the cursor at position at the start for redrawing
+            print(ansi.Cursor.POS(1, 1))
+            output_str = '\n'.join(output_matrix)
+
+            # Printing in this way, really speeds up the output. Otherwise two loops will really
+            # slow it down
+            print(output_str)
+    except KeyboardInterrupt as e:
+        # Clear the screen when the user presses interrupts the program CTRL ^ C
         print(ansi.clear_screen())
-        for row in output_matrix:
-            for character in row:
-                print(character, end="")
-            print()
-        input()
