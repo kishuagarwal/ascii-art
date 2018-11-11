@@ -1,6 +1,9 @@
 from PIL import Image
+from camera import get_webcam_image
+import colorama
+from colorama import ansi
 
-MAX_TERMINAL_IMAGE_SIZE = 150
+MAX_TERMINAL_IMAGE_SIZE = 50
 MAX_BRIGHTNESS_LEVEL = 255
 
 ascii_brightness_levels = "`^\",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
@@ -22,24 +25,29 @@ def get_ascii_for_pixel(pixel, algo = "AVG"):
 
 
 if __name__ == "__main__":
-    input_image = Image.open("input.jpg")
-    width, height = input_image.size
+    # input_image = Image.open("input.jpg")
+    colorama.init()
+    while True:
+        input_image = get_webcam_image()
+        width, height = input_image.size
 
-    resize_to = min(width, height, MAX_TERMINAL_IMAGE_SIZE)
-    input_image = input_image.resize((resize_to, resize_to))
+        resize_to = min(width, height, MAX_TERMINAL_IMAGE_SIZE)
+        input_image = input_image.resize((resize_to, resize_to))
 
-    output_matrix = []
-    for y in range(resize_to):
-        current_matrix_row = []
-        for x in range(resize_to):
-            pixel = input_image.getpixel((x, y))
-            ascii_char = get_ascii_for_pixel(pixel, algo="MIN_MAX")
-            current_matrix_row.append(ascii_char)
-            current_matrix_row.append(ascii_char)
-            current_matrix_row.append(ascii_char)
-        output_matrix.append(current_matrix_row)
+        output_matrix = []
+        for y in range(resize_to):
+            current_matrix_row = []
+            for x in range(resize_to):
+                pixel = input_image.getpixel((x, y))
+                ascii_char = get_ascii_for_pixel(pixel, algo="MIN_MAX")
+                current_matrix_row.append(ascii_char)
+                current_matrix_row.append(ascii_char)
+                current_matrix_row.append(ascii_char)
+            output_matrix.append(current_matrix_row)
 
-    for row in output_matrix:
-        for character in row:
-            print(character, end="")
-        print()
+        print(ansi.clear_screen())
+        for row in output_matrix:
+            for character in row:
+                print(character, end="")
+            print()
+        input()
